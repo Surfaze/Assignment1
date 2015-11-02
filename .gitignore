@@ -41,3 +41,11 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.pdb
+*.tlog
+*.log
+Assignment1.vcxproj.filters
+*.obj
+*.vcxproj
+Debug/vc140.idb
+*.exe
