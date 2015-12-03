@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include "util.h"
 //Define Functions
 void welcomeMsg();
 
@@ -28,4 +28,4 @@ void welcomeMsg() {
 //===========================Decryption Function by Jia Hao====================================
 //this is a test
 //change test
-//=============================End Encryption Function======================================
+//=============================End Decryption Function======================================
