@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "util.h"
 //Define Functions
 void welcomeMsg();
 

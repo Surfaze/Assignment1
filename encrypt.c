@@ -50,20 +50,27 @@ int isPrime(long x){
 }
 void encrypt(){
 	seedRandom();
-	long p = primeNumberAbove(randomInt(1000,2000));
-	long q = primeNumberAbove(p);
+	long p,q;
+	do{
+		p = randomInt(1000,2000);
+		q = randomInt(1000,2000);
+	}while(isPrime(p)!=0 && isPrime(q)!=0);
 	
 	long n = p*q;
 	long tot = (p-1)*(q-1);
 	
 	int i;
-	long d[10];
-	printf("Possible values of d & e\n");
+	//long d[10];
+	long d;
+	//printf("Possible values of d & e\n");
+	long e;
+	
+	
 	
 	do{
 		i++;
-		d[i-1] = tot*i+1;
-		long e = d[i-1];
+		d = tot*i+1;
+		e = d;
 		int div=2;
 		
 		do{
@@ -74,14 +81,19 @@ void encrypt(){
 			}
 		}while(isPrime(e)==1);
 		
-		if(!(e == d[i-1])){
-			printf("%d\t%d\n",e, d[i-1]/e);
+		if(!(e == d)){
+			printf("%d\t%d\n",e, d/e);
 		}
 	}while(i<=10);
 	
+	printf("\np: %ld\nq: %ld\nn: %ld\ntot: %ld\n",p,q,n,tot);
 	
+	Keys key;
+	key.n = n;
+	key.d=d/e;
+	key.e=e;
 	
-	printf("\np: %d\nq: %d\nn: %d\ntot: %d\n",p,q,n,tot);
+	printf("\nn: %ld\nd: %ld\ne: %ld\n",key.n,key.d,key.e);
 }
 
 
