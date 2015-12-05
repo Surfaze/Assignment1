@@ -48,15 +48,24 @@ int isPrime(long x){
 	}
 	return 0;
 }
+void writeToFile(int* C,int size){
+	FILE * fp;
+	fp = fopen ("cipher.txt", "w+");
+	
+	int i;
+	for(i = 0; i < size; i++){
+		fprintf(fp,"%d;",C[i]);
+	}
+	
+	fclose(fp);
+}
 void encrypt(){
 	
-	seedRandom();//seed RNG
+	seedRandom();
 	long p,q;
 	do{
 		p = randomInt(2,100);
 		q = randomInt(2,100);
-		//p=23;
-		//q=17;
 		printf("%d\t%d\n",p,q);
 	}while(isPrime(p)!=0 || isPrime(q)!=0);
 	
@@ -65,9 +74,7 @@ void encrypt(){
 	long tot = (p-1)*(q-1);
 	
 	int i;
-	//long d[10];
 	long d;
-	//printf("Possible values of d & e\n");
 	long e;
 	
 	int j;
@@ -123,8 +130,6 @@ void encrypt(){
 		for(k = 0;k<key.e;k++){
 			step = (step * P[i]) % key.n;
 			printf("%d\t",step); 
-			//testing if it affects anot, and it doesnt ._.
-			//C[i] = step;
 		}
 		printf("end\t");
 		
@@ -136,6 +141,7 @@ void encrypt(){
 	for(x = 0; x< size;x++){
 		printf("%d\t",C[x]);
 	}
+	writeToFile(C,size);
 }
 
 
