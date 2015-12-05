@@ -108,21 +108,33 @@ void encrypt(){
 	printf("\n\nPlain Text\n-----------------\n");
 	int size = strlen(M);
 	int P[100];
+	
 	for(i=0;i<size;i++){
+		
 		P[i] = M[i]-'\0';
 		printf("%d\t",P[i]);
 		//Retarded inefficient method that doesnt work -.-
 		//C[i] = pow(P[i],key.e) % key.n;
 		int k;
 		int step =1;
+		
+		printf("\ntest\t%d\t",step);
+		
 		for(k = 0;k<key.e;k++){
-			step = step * P[i] % key.n;
+			step = (step * P[i]) % key.n;
+			printf("%d\t",step); 
+			//testing if it affects anot, and it doesnt ._.
+			//C[i] = step;
 		}
+		printf("end\t");
+		
 		C[i] = step;
+		printf("%d\n",C[i]);
 	}
 	printf("\n\nEncrypted\n---------------------\n");
-	for(i = 0; i< size;i++){
-		printf("%d\t",C[i]);
+	int x;
+	for(x = 0; x< size;x++){
+		printf("%d\t",C[x]);
 	}
 }
 
