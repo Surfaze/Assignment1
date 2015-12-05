@@ -97,6 +97,29 @@ void encrypt(){
 	key.e=e;
 	
 	printf("\nn: %ld\nd: %ld\ne: %ld\n",key.n,key.d,key.e);
+	
+	char M[100],C[100];
+	
+	printf("Enter Message: ");
+	gets(M);
+	
+	int size = (int)strlen(M);
+	int P[100];
+	for(i=0;i<size;i++){
+		P[i] = M[i]-'\0';
+		printf("%d\t",P[i]);
+		//C[i] = pow(P[i],key.e) % key.n;
+		int k;
+		int step =1;
+		for(k = 0;k<key.e;k++){
+			step = (int)(step * P[i]) * key.n;
+		}
+		C[i] = step;
+	}
+	
+	for(i = 0; i< size;i++){
+		printf("%d\t",C[i]);
+	}
 }
 
 
