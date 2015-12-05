@@ -53,10 +53,10 @@ void encrypt(){
 	seedRandom();//seed RNG
 	long p,q;
 	do{
-		//p = randomInt(0,100);
-		//q = randomInt(0,100);
-		p=23;
-		q=17;
+		p = randomInt(2,100);
+		q = randomInt(2,100);
+		//p=23;
+		//q=17;
 		printf("%d\t%d\n",p,q);
 	}while(isPrime(p)!=0 || isPrime(q)!=0);
 	
