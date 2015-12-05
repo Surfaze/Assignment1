@@ -103,11 +103,13 @@ void encrypt(){
 	printf("Enter Message: ");
 	gets(M);
 	
+	printf("\n\nPlain Text\n-----------------\n");
 	int size = (int)strlen(M);
 	int P[100];
 	for(i=0;i<size;i++){
 		P[i] = M[i]-'\0';
 		printf("%d\t",P[i]);
+		//Retarded inefficient method that doesnt work -.-
 		//C[i] = pow(P[i],key.e) % key.n;
 		int k;
 		int step =1;
@@ -116,7 +118,7 @@ void encrypt(){
 		}
 		C[i] = step;
 	}
-	
+	printf("\n\nEncrypted\n---------------------\n");
 	for(i = 0; i< size;i++){
 		printf("%d\t",C[i]);
 	}
