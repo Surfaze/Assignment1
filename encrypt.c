@@ -49,13 +49,16 @@ int isPrime(long x){
 	return 0;
 }
 void encrypt(){
-	seedRandom();
+	
+	seedRandom();//seed RNG
 	long p,q;
 	do{
-		p = randomInt(1000,2000);
-		q = randomInt(1000,2000);
+		p = randomInt(0,100);
+		q = randomInt(0,100);
+		printf("%d\t%d\n",p,q);
 	}while(isPrime(p)!=0 && isPrime(q)!=0);
 	
+	printf("---------------\n");
 	long n = p*q;
 	long tot = (p-1)*(q-1);
 	
@@ -65,9 +68,9 @@ void encrypt(){
 	//printf("Possible values of d & e\n");
 	long e;
 	
+	int j;
 	
-	
-	do{
+	for(j=0; j <10; j++){
 		i++;
 		d = tot*i+1;
 		e = d;
@@ -83,8 +86,8 @@ void encrypt(){
 		
 		if(!(e == d)){
 			printf("%d\t%d\n",e, d/e);
-		}
-	}while(i<=10);
+		}else j--;
+	}
 	
 	printf("\np: %ld\nq: %ld\nn: %ld\ntot: %ld\n",p,q,n,tot);
 	
