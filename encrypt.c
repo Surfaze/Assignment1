@@ -53,8 +53,10 @@ void encrypt(){
 	seedRandom();//seed RNG
 	long p,q;
 	do{
-		p = randomInt(0,100);
-		q = randomInt(0,100);
+		//p = randomInt(0,100);
+		//q = randomInt(0,100);
+		p=23;
+		q=17;
 		printf("%d\t%d\n",p,q);
 	}while(isPrime(p)!=0 || isPrime(q)!=0);
 	
@@ -114,7 +116,7 @@ void encrypt(){
 		int k;
 		int step =1;
 		for(k = 0;k<key.e;k++){
-			step = (int)(step * P[i]) * key.n;
+			step = (int)(step * P[i]) % key.n;
 		}
 		C[i] = step;
 	}
