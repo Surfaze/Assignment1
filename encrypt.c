@@ -19,8 +19,7 @@ void seedRandom(){
 	time_t t;
 	srand((unsigned)time(&t));
 }
-long primeNumberAbove(long in){
-	in++;
+long prime(long in){
 	for(;;in++){
 		if (in % 2 == 0){
 			continue;
@@ -40,7 +39,7 @@ int isPrime(long x){
 		return 1;
 	}
 	long max = floor(sqrt(x));
-	int i = 2;
+	int i = 1;
 	for (; i < max; i++) {
 		if (x % ((2 * i) + 1) == 0){
 			return 1;
@@ -59,6 +58,14 @@ void writeToFile(int* C,int size){
 	
 	fclose(fp);
 }
+void stepToFile(int x){
+	FILE * fp;
+	fp = fopen ("step.txt", "a");
+	
+	fprintf(fp,"%d\n",x);
+	
+	fclose(fp);
+}
 void encrypt(){
 	//Declarations
 	long p, q, d, e, n, tot;
@@ -69,10 +76,10 @@ void encrypt(){
 	seedRandom();
 	//Generate 2 random primes p & q
 	do{
-		p = randomInt(1000,2000);
-		q = randomInt(1000,2000);
+		p = prime(randomInt(1000,2000));
+		q = prime(randomInt(1000,2000));
 		printf("%d\t%d\n",p,q);
-	}while(isPrime(p)!=0 || isPrime(q)!=0);
+	}while(isPrime(p)!=0 && isPrime(q)!=0);
 	
 	printf("---------------\n");
 	//Calculating n and totient
@@ -125,6 +132,7 @@ void encrypt(){
 		for(k = 0;k<key.e;k++){
 			step = (step * P[i]) % key.n;
 			printf("%d\t",step); 
+			//stepToFile(step);
 		}
 		printf("end\t");
 		
