@@ -60,64 +60,59 @@ void writeToFile(int* C,int size){
 	fclose(fp);
 }
 void encrypt(){
-	
+	//Declarations
+	long p, q, d, e, n, tot;
+	int i, j, size, x;
+	char M[100];
+	int P[100], C[100];
+	//Seed random
 	seedRandom();
-	long p,q;
+	//Generate 2 random primes p & q
 	do{
-		p = randomInt(2,100);
-		q = randomInt(2,100);
+		p = randomInt(1000,2000);
+		q = randomInt(1000,2000);
 		printf("%d\t%d\n",p,q);
 	}while(isPrime(p)!=0 || isPrime(q)!=0);
 	
 	printf("---------------\n");
-	long n = p*q;
-	long tot = (p-1)*(q-1);
-	
-	int i;
-	long d;
-	long e;
-	
-	int j;
-	
+	//Calculating n and totient
+	n = p*q;
+	tot = (p-1)*(q-1);
+
+	//Solving for d & e
 	for(j=0; j <10; j++){
 		i++;
 		d = tot*i+1;
 		e = d;
+		
 		int div=2;
 		
 		do{
-			if(e%div==0){
-				e /= div;
-			}else{
-				div++;
-			}
+			(e%div==0)? e /= div : div++;
+			
 		}while(isPrime(e)==1);
 		
-		if(!(e == d)){
-			//printf("%d\t%d\n",e, d/e);
-		}else j--;
+		if((e == d)) j--;
 	}
 	
 	printf("\np: %ld\nq: %ld\nn: %ld\ntot: %ld\n",p,q,n,tot);
-	
+	//Storing values into Keys struct
 	Keys key;
 	key.n = n;
 	key.d=d/e;
 	key.e=e;
 	
 	printf("\nn: %ld\nd: %ld\ne: %ld\n",key.n,key.d,key.e);
-	
-	char M[100];
-	
+
+	//Retriving user message to encrypt
 	printf("Enter Message: ");
 	gets(M);
-	
 	printf("\n\nPlain Text\n-----------------\n");
-	int size = strlen(M);
-	int P[100],C[100];
+	//Calculating size of message
+	size = strlen(M);
 	
+	//Encrypting message
 	for(i=0;i<size;i++){
-		
 		P[i] = M[i]-'\0';
 		printf("%d\t",P[i]);
 		//Retarded inefficient method that doesnt work -.-
@@ -137,10 +132,11 @@ void encrypt(){
 		printf("%d\n",C[i]);
 	}
 	printf("\n\nEncrypted\n---------------------\n");
-	int x;
+	
 	for(x = 0; x< size;x++){
 		printf("%d\t",C[x]);
 	}
+	//writing to output file
 	writeToFile(C,size);
 }
 
