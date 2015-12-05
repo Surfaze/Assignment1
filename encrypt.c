@@ -106,7 +106,7 @@ void encrypt(){
 	gets(M);
 	
 	printf("\n\nPlain Text\n-----------------\n");
-	int size = (int)strlen(M);
+	int size = strlen(M);
 	int P[100];
 	for(i=0;i<size;i++){
 		P[i] = M[i]-'\0';
@@ -116,7 +116,7 @@ void encrypt(){
 		int k;
 		int step =1;
 		for(k = 0;k<key.e;k++){
-			step = (int)(step * P[i]) % key.n;
+			step = step * P[i] % key.n;
 		}
 		C[i] = step;
 	}
