@@ -100,14 +100,14 @@ void encrypt(){
 	
 	printf("\nn: %ld\nd: %ld\ne: %ld\n",key.n,key.d,key.e);
 	
-	char M[100],C[100];
+	char M[100];
 	
 	printf("Enter Message: ");
 	gets(M);
 	
 	printf("\n\nPlain Text\n-----------------\n");
 	int size = strlen(M);
-	int P[100];
+	int P[100],C[100];
 	
 	for(i=0;i<size;i++){
 		
