@@ -58,6 +58,19 @@ void writeToFile(int* C,int size){
 	
 	fclose(fp);
 }
+	
+long bin_mod(long b, long e,long m){
+	if (m == 1) return 0;
+	int r =1;
+	b %= m;
+	while(e > 0){
+		if (e % 2 == 1) r = (r * b) % m;
+		e = e >> 1;
+		b = (b*b) % m;
+	}
+	return r;
+}
+
 void encrypt(){
 	//Declarations
 	long p, q, d, e, n, tot;
@@ -115,7 +128,8 @@ void encrypt(){
 		P[i] = M[i]-'\0';
 		printf("%d\t",P[i]);
 		
-		int k;
+		//------------------modular method start------------------
+		/*int k;
 		int step =1;
 		
 		printf("\ntest\t%d\t",step);
@@ -126,7 +140,12 @@ void encrypt(){
 		}
 		printf("end\t");
 		
-		C[i] = step;
+		C[i] = step;*/
+		//------------------modular method end------------------
+		
+		//------------------binary method start------------------
+		C[i] = bin_mod(P[i],key.e,key.n);
+		//------------------binary method end------------------
 		printf("%d\n",C[i]);
 	}
 	printf("\n\nEncrypted\n---------------------\n");
