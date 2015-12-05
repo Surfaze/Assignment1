@@ -56,7 +56,7 @@ void encrypt(){
 		p = randomInt(0,100);
 		q = randomInt(0,100);
 		printf("%d\t%d\n",p,q);
-	}while(isPrime(p)!=0 && isPrime(q)!=0);
+	}while(isPrime(p)!=0 || isPrime(q)!=0);
 	
 	printf("---------------\n");
 	long n = p*q;
@@ -85,7 +85,7 @@ void encrypt(){
 		}while(isPrime(e)==1);
 		
 		if(!(e == d)){
-			printf("%d\t%d\n",e, d/e);
+			//printf("%d\t%d\n",e, d/e);
 		}else j--;
 	}
 	
