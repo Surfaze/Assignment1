@@ -15,6 +15,9 @@ typedef struct{
 	int d;
 } Keys;
 
+void myFlush(){
+	while(getchar()!='\n');
+}
 void seedRandom(){
 	time_t t;
 	srand((unsigned)time(&t));
@@ -157,7 +160,42 @@ void encrypt(){
 	writeToFile(C,size);
 }
 
+void encryptFile(){
+	const char * path = "cipher.txt";
+	FILE *fp; /*filepointer*/
+	size_t size; /*filesize*/
+	unsigned char *buffer; /*buffer*/
+
+	fp = fopen(path,"rb"); /*open file*/
+	fseek(fp, 0, SEEK_END); 
+	size = ftell(fp); /*calc the size needed*/
+	fseek(fp, 0, SEEK_SET); 
+	buffer = (unsigned char *) malloc(size);
+
+	if (fp == NULL){ /*ERROR detection if file == empty*/
+		printf("Error: There was an Error reading the file %s \n", path);
+		exit(1);
+	}
+	else if (fread(&buffer, sizeof(*buffer), size, fp) != size){ /* if count of read bytes != calculated size of .bin file -> ERROR*/
+		printf("Error: There was an Error reading the file %s - %d\n", path);
+		exit(1);
+	}else{
+		int i;
+		for(i=0; i<size;i++){
+			printf("%02x", buffer[i]);
+		}
+	}
+	fclose(fp);
+	free(buffer);
+}
 
 void main(void){
-	encrypt();
+	int choice;
+	do{
+		printf("Action:\n1. Encrypt Message\n2. Encrypt Binary File\n3. Exit\nYour choice: ");
+		scanf("%d", &choice);
+		myFlush();
+		printf("\n--------------------------------------------------------------\n");
+	}while(choice < 1 || choice > 3);
+	(choice == 1)? encrypt() : (choice == 2) ? encryptFile() :  (choice == 3) ? exit(0) : 0;
 }
