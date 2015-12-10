@@ -161,32 +161,28 @@ void encrypt(){
 }
 
 void encryptFile(){
-	const char * path = "cipher.txt";
-	FILE *fp; /*filepointer*/
-	size_t size; /*filesize*/
-	unsigned char *buffer; /*buffer*/
+	
+	FILE* fp;
+	char* in;
+	fp = fopen("test.bin","rb");
+	fseek(fp,0,SEEK_END);
+	size_t size = ftell(fp);
+	rewind(fp);
+	in = (char*)malloc(size);
+	size_t ret_code = fread(in, sizeof *in, 1, fp); 
+	printf("%d\n",size);
+	printf("%d",ret_code);
 
-	fp = fopen(path,"rb"); /*open file*/
-	fseek(fp, 0, SEEK_END); 
-	size = ftell(fp); /*calc the size needed*/
-	fseek(fp, 0, SEEK_SET); 
-	buffer = (unsigned char *) malloc(size);
+		puts("Array read successfully, contents: ");
+		for(int n = 0; n < size; ++n) printf("%X ", in[n]);
+		putchar('\n');
 
-	if (fp == NULL){ /*ERROR detection if file == empty*/
-		printf("Error: There was an Error reading the file %s \n", path);
-		exit(1);
-	}
-	else if (fread(&buffer, sizeof(*buffer), size, fp) != size){ /* if count of read bytes != calculated size of .bin file -> ERROR*/
-		printf("Error: There was an Error reading the file %s - %d\n", path);
-		exit(1);
-	}else{
-		int i;
-		for(i=0; i<size;i++){
-			printf("%02x", buffer[i]);
-		}
-	}
-	fclose(fp);
-	free(buffer);
+	   if (feof(fp))
+			printf("Error reading test.bin: unexpected end of file\n");
+	   else if (ferror(fp)) {
+			perror("Error reading test.bin");
+	   }
+	
 }
 
 void main(void){
