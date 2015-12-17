@@ -156,6 +156,8 @@ void encrypt(){
 	}
 	//writing to output file
 	//writeToFile(C,size);
+	
+	// *for testing purposes*
 	printf("\n\nDecrypted\n---------------------\n");
 	for(i=0;i<size;i++){
 		P[i] = C[i];
