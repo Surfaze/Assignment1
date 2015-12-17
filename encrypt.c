@@ -160,11 +160,11 @@ void encrypt(){
 	writeToFile(C,size);
 }
 
-void encryptFile(){
+void encryptFile(char* name){
 	
 	FILE* fp;
 	char* in;
-	fp = fopen("test.bin","rb");
+	fp = fopen(name,"rb");
 	fseek(fp,0,SEEK_END);
 	size_t size = ftell(fp);
 	rewind(fp);
@@ -178,10 +178,9 @@ void encryptFile(){
 		putchar('\n');
 
 	   if (feof(fp))
-			printf("Error reading test.bin: unexpected end of file\n");
-	   else if (ferror(fp)) {
-			perror("Error reading test.bin");
-	   }
+			printf("Error reading %s: unexpected end of file\n",name);
+	   else if (ferror(fp)) 
+			printf("Error reading %s", name);
 	
 }
 
@@ -193,5 +192,5 @@ void main(void){
 		myFlush();
 		printf("\n--------------------------------------------------------------\n");
 	}while(choice < 1 || choice > 3);
-	(choice == 1)? encrypt() : (choice == 2) ? encryptFile() :  (choice == 3) ? exit(0) : 0;
+	(choice == 1)? encrypt() : (choice == 2) ? encryptFile("test.bin") :  (choice == 3) ? exit(0) : 0;
 }
