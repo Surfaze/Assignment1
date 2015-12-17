@@ -4,16 +4,31 @@
 #include <math.h>
 #include <time.h>
 
+void myFlush();
 void seedRandom();
-long primeNumberAbove(long in);
 long randomInt(long min, long max);
 int isPrime(long x);
+void writeToFile(int* C,int size);
+long bin_mod(long b, long e,long m);
+void encrypt();
+void readBinBytes(char* name);
 
 typedef struct{
 	int n;
 	int e;
 	int d;
 } Keys;
+
+void main(void){
+	int choice;
+	do{
+		printf("Action:\n1. Encrypt Message\n2. Encrypt Binary File\n3. Exit\nYour choice: ");
+		scanf("%d", &choice);
+		myFlush();
+		printf("\n--------------------------------------------------------------\n");
+	}while(choice < 1 || choice > 3);
+	(choice == 1)? encrypt() : (choice == 2) ? readBinBytes("test.bin") :  (choice == 3) ? exit(0) : 0;
+}
 
 void myFlush(){
 	while(getchar()!='\n');
@@ -76,7 +91,7 @@ long bin_mod(long b, long e,long m){
 
 void encrypt(){
 	//Declarations
-	long p, q, d, e, n, tot;
+	long long p, q, d, e, n, tot;
 	int i, j, size, x;
 	char M[100];
 	int P[100], C[100];
@@ -84,9 +99,10 @@ void encrypt(){
 	seedRandom();
 	//Generate 2 random primes p & q
 	do{
-		p = prime(randomInt(1000,2000));
-		q = prime(randomInt(1000,2000));
-		printf("%d\t%d\n",p,q);
+		//cannot do more 100k, overflow maybe?
+		p = prime(randomInt(10000,20000));
+		q = prime(randomInt(10000,20000));
+		printf("%lld\t%lld\n",p,q);
 	}while(isPrime(p)!=0 && isPrime(q)!=0);
 	
 	printf("---------------\n");
@@ -110,14 +126,14 @@ void encrypt(){
 		if((e == d)) j--;
 	}
 	
-	printf("\np: %ld\nq: %ld\nn: %ld\ntot: %ld\n",p,q,n,tot);
+	printf("\np: %lld\nq: %lld\nn: %lld\ntot: %lld\n",p,q,n,tot);
 	//Storing values into Keys struct
 	Keys key;
 	key.n = n;
 	key.d=d/e;
 	key.e=e;
 	
-	printf("\nn: %ld\nd: %ld\ne: %ld\n",key.n,key.d,key.e);
+	printf("\nn: %lld\nd: %lld\ne: %lld\n",key.n,key.d,key.e);
 
 	//Retriving user message to encrypt
 	printf("Enter Message: ");
@@ -129,38 +145,27 @@ void encrypt(){
 	//Encrypting message
 	for(i=0;i<size;i++){
 		P[i] = M[i]-'\0';
-		printf("%d\t",P[i]);
-		
-		//------------------modular method start------------------
-		/*int k;
-		int step =1;
-		
-		printf("\ntest\t%d\t",step);
-		
-		for(k = 0;k<key.e;k++){
-			step = (step * P[i]) % key.n;
-			printf("%d\t",step); 
-		}
-		printf("end\t");
-		
-		C[i] = step;*/
-		//------------------modular method end------------------
-		
-		//------------------binary method start------------------
+		printf("%lld\t",P[i]);
 		C[i] = bin_mod(P[i],key.e,key.n);
-		//------------------binary method end------------------
-		printf("%d\n",C[i]);
+		printf("%lld\n",C[i]);
 	}
 	printf("\n\nEncrypted\n---------------------\n");
 	
 	for(x = 0; x< size;x++){
-		printf("%d\t",C[x]);
+		printf("%lld\t",C[x]);
 	}
 	//writing to output file
-	writeToFile(C,size);
+	//writeToFile(C,size);
+	printf("\n\nDecrypted\n---------------------\n");
+	for(i=0;i<size;i++){
+		P[i] = C[i];
+		printf("%lld\t",P[i]);
+		C[i] = bin_mod(P[i],key.d,key.n);
+		printf("%lld\n",C[i]);
+	}
 }
 
-void encryptFile(char* name){
+void readBinBytes(char* name){
 	
 	FILE* fp;
 	char* in;
@@ -169,28 +174,18 @@ void encryptFile(char* name){
 	size_t size = ftell(fp);
 	rewind(fp);
 	in = (char*)malloc(size);
-	size_t ret_code = fread(in, sizeof *in, 1, fp); 
+	size_t ret_code = fread(in, sizeof *in, size, fp); 
 	printf("%d\n",size);
-	printf("%d",ret_code);
-
-		puts("Array read successfully, contents: ");
-		for(int n = 0; n < size; ++n) printf("%X ", in[n]);
-		putchar('\n');
-
-	   if (feof(fp))
-			printf("Error reading %s: unexpected end of file\n",name);
-	   else if (ferror(fp)) 
-			printf("Error reading %s", name);
-	
-}
-
-void main(void){
-	int choice;
-	do{
-		printf("Action:\n1. Encrypt Message\n2. Encrypt Binary File\n3. Exit\nYour choice: ");
-		scanf("%d", &choice);
-		myFlush();
-		printf("\n--------------------------------------------------------------\n");
-	}while(choice < 1 || choice > 3);
-	(choice == 1)? encrypt() : (choice == 2) ? encryptFile("test.bin") :  (choice == 3) ? exit(0) : 0;
+	printf("%d\n\n",ret_code);
+	if(ret_code == size){
+		printf("Array read successfully, contents: \n");
+		for(int n = 0; n < size; ++n) printf("%d ", in[n]);
+		printf("\n");
+	}
+   if (feof(fp)){
+		printf("Error reading %s: unexpected end of file\n",name);
+   }
+   else if (ferror(fp)) {
+		printf("Error reading %s", name);
+   }
 }
