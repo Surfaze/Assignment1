@@ -4,30 +4,34 @@
 #include <math.h>
 #include <time.h>
 
-void myFlush();
-void seedRandom();
-long randomInt(long min, long max);
-int isPrime(long x);
-void writeToFile(int* C,int size);
-long bin_mod(long b, long e,long m);
-void encrypt();
-void readBinBytes(char* name);
-
 typedef struct{
 	int n;
 	int e;
 	int d;
 } Keys;
 
+void myFlush();
+void seedRandom();
+long randomInt(long min, long max);
+int isPrime(long x);
+void writeToFile(char* name, int* C,int size,char type);
+long bin_mod(long b, long e,long m);
+void genKey();
+void writeKeys(Keys key);
+void encrypt();
+void readBinBytes();
+
+
+
 void main(void){
 	int choice;
 	do{
-		printf("Action:\n1. Encrypt Message\n2. Encrypt Binary File\n3. Exit\nYour choice: ");
+		printf("Action:\n1. Encrypt Message\n2. Encrypt Binary File\n3. Create a key pair\n4. Exit\nYour choice: ");
 		scanf("%d", &choice);
 		myFlush();
 		printf("\n--------------------------------------------------------------\n");
-	}while(choice < 1 || choice > 3);
-	(choice == 1)? encrypt() : (choice == 2) ? readBinBytes("test.jpg") :  (choice == 3) ? exit(0) : 0;
+	}while(choice < 1 || choice > 4);
+	(choice == 1)? encrypt() : (choice == 2) ? readBinBytes() :  (choice == 3) ? genKey() : (choice == 4) ? exit(0) : 0;
 }
 
 void myFlush(){
@@ -65,16 +69,26 @@ int isPrime(long x){
 	}
 	return 0;
 }
-void writeToFile(int* C,int size){
+void writeToFile(char* name, int* C,int size, char type){
+	
 	FILE * fp;
-	fp = fopen ("cipher.txt", "w+");
-	
-	int i;
-	for(i = 0; i < size; i++){
-		fprintf(fp,"%d;",C[i]);
+	if(type == 'b'){
+		fp = fopen (name, "wb");
+		
+		for(int i = 0; i < size; i++){
+			fprintf(fp,"%d",C[i]);
+		}
+		
+		fclose(fp);
+	}else{
+		fp = fopen (name, "w");
+		
+		for(int i = 0; i < size; i++){
+			fprintf(fp,"%d;",C[i]);
+		}
+		
+		fclose(fp);
 	}
-	
-	fclose(fp);
 }
 	
 long bin_mod(long b, long e,long m){
@@ -89,12 +103,10 @@ long bin_mod(long b, long e,long m){
 	return r;
 }
 
-void encrypt(){
-	//Declarations
-	long long p, q, d, e, n, tot;
-	int i, j, size, x;
-	char M[100];
-	int P[100], C[100];
+void genKey(){
+	
+	int p,q,i,j;
+	long long n,tot,d,e;
 	//Seed random
 	seedRandom();
 	//Generate 2 random primes p & q
@@ -133,7 +145,75 @@ void encrypt(){
 	key.d=d/e;
 	key.e=e;
 	
-	printf("\nn: %lld\nd: %lld\ne: %lld\n",key.n,key.d,key.e);
+	printf("\nn: %lld\nd: %lld\ne: %lld\n\n",key.n,key.d,key.e);
+
+	writeKeys(key);
+}
+
+void writeKeys(Keys key){
+	FILE * fp;
+
+	char out[50],out1[50];
+	
+	do{
+		printf("Enter your name: ");
+		scanf("%s",out);
+		myFlush();
+		printf("\nPlease re-enter your name to confirm: ");
+		scanf("%s",out1);
+		myFlush();
+		if(strcmp(out,out1) != 0) printf("\nNames do not match.\n");
+	}while(strcmp(out,out1) != 0);
+
+	char* priv = strcat(out,"_priv.txt");
+	char* pub = strcat(out1,"_pub.txt");
+	
+	fp = fopen (priv, "w+");
+	fprintf(fp,"%d;%d",key.n,key.d);
+	fclose(fp);
+	
+	fp = fopen (pub, "w+");
+	fprintf(fp,"%d;%d",key.n,key.e);
+	fclose(fp);
+
+}
+
+Keys readPubKey(){
+	FILE* fp;
+	Keys key;
+	printf("Name of public key file you would like to use(e.g. xxx_pub.txt): ");
+	char name[100], in[100];
+	scanf("%s",name);
+	myFlush();
+	
+	size_t size;
+	if(fp = fopen(name, "r")){
+		fseek(fp,0,SEEK_END);
+		size = ftell(fp);
+		rewind(fp);
+		size_t ret_code = fread(in, 1, size, fp); 
+		printf("%d\n",size);
+		printf("%d\n\n",ret_code);
+		
+		const char tok[2] = ";";
+		char* token = strtok(in, tok);
+		key.n = atoi(token);
+		token = strtok(NULL,tok);
+		key.e = atoi(token);
+		return key;
+	}else{
+		printf("\nError reading file %s\n", name);
+		readPubKey();
+	}
+	
+}
+
+void encrypt(){
+	//Declarations
+	int size, x, i;
+	char M[100];
+	int P[100], C[100];
+	Keys key = readPubKey();
 
 	//Retriving user message to encrypt
 	printf("Enter Message: ");
@@ -145,56 +225,65 @@ void encrypt(){
 	//Encrypting message
 	for(i=0;i<size;i++){
 		P[i] = M[i]-'\0';
-		printf("%lld\t",P[i]);
+		printf("%d\t",P[i]);
 		C[i] = bin_mod(P[i],key.e,key.n);
-		printf("%lld\n",C[i]);
+		printf("%d\n",C[i]);
 	}
 	printf("\n\nEncrypted\n---------------------\n");
 	
 	for(x = 0; x< size;x++){
-		printf("%lld\t",C[x]);
+		printf("%d\t",C[x]);
 	}
 	//writing to output file
-	//writeToFile(C,size);
-	
-	// *for testing purposes*
-	printf("\n\nDecrypted\n---------------------\n");
-	for(i=0;i<size;i++){
-		P[i] = C[i];
-		printf("%lld\t",P[i]);
-		C[i] = bin_mod(P[i],key.d,key.n);
-		printf("%lld\n",C[i]);
-	}
+	writeToFile("cipher.txt",C,size,'f');
 }
 
-void readBinBytes(char* name){
+void readBinBytes(){
+	
+	printf("File name to encrypt: ");
+	char* name;
+	scanf("%s",name);
+	myFlush();
 	
 	FILE* fp;
 	char* in;
+	int* arr;
+	size_t size;
 	if(fp = fopen(name,"rb")){
 	
 		fseek(fp,0,SEEK_END);
-		size_t size = ftell(fp);
+		size = ftell(fp);
 		rewind(fp);
 		in = (char*)malloc(size);
+		arr = (int*)malloc(size);
 		size_t ret_code = fread(in, sizeof *in, size, fp); 
 		printf("%d\n",size);
 		printf("%d\n\n",ret_code);
 		if(ret_code == size){
 			printf("Array read successfully, contents: \n");
-			for(int n = 0; n < size; ++n) printf("%d ", in[n]);
+			for(int n = 0; n < size; ++n){
+				printf("%d ", in[n]);
+				arr[n] = (int)in[n];
+			}
 			printf("\n");
 		}
 		if (feof(fp)){
 			printf("Error reading %s: unexpected end of file\n",name);
-	   }
-	   else if (ferror(fp)) {
+		}
+		else if (ferror(fp)) {
 			printf("Error reading %s", name);
-	   }
+		}
+		
+	fclose(fp);
+	char* out;
+	printf("Output File name: ");
+	
+	scanf("%s",out);
+	myFlush();
+		
+	writeToFile("test.txt", arr, size,'b');
 	
 	}else{
 		printf("Error reading %s", name);
 	}
-	
-	
 }
