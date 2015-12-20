@@ -287,6 +287,7 @@ void readBinBytes(){
 
 		//Encrypting
 		for(int i=0;i<size;i++){
+			//weird line of code that breaks this whole thing :(
 			arr[i] = bin_mod(arr[i],key.e,key.n);
 		}
 		
