@@ -14,7 +14,7 @@ void myFlush();
 void seedRandom();
 long randomInt(long min, long max);
 int isPrime(long x);
-void writeToFile(char* name, int* C,int size,char type);
+void writeToFile(int* C,int size,char type);
 long bin_mod(long b, long e,long m);
 void genKey();
 void writeKeys(Keys key);
@@ -69,14 +69,20 @@ int isPrime(long x){
 	}
 	return 0;
 }
-void writeToFile(char* name, int* C,int size, char type){
+void writeToFile(int* C,int size, char type){
 	
 	FILE * fp;
+	
+	char name[50];
+	printf("\nEnter output file name: ");
+	scanf("%s",name);
+	myFlush();
+	
 	if(type == 'b'){
 		fp = fopen (name, "wb");
 		
 		for(int i = 0; i < size; i++){
-			fprintf(fp,"%d",C[i]);
+			fprintf(fp,"%d;",C[i]);
 		}
 		
 		fclose(fp);
@@ -211,8 +217,8 @@ Keys readPubKey(){
 void encrypt(){
 	//Declarations
 	int size, x, i;
-	char M[100];
-	int P[100], C[100];
+	char M[1000];
+	int P[1000], C[1000];
 	Keys key = readPubKey();
 
 	//Retriving user message to encrypt
@@ -235,10 +241,12 @@ void encrypt(){
 		printf("%d\t",C[x]);
 	}
 	//writing to output file
-	writeToFile("cipher.txt",C,size,'f');
+	writeToFile(C,size,'f');
 }
 
 void readBinBytes(){
+	
+	Keys key = readPubKey();	
 	
 	printf("File name to encrypt: ");
 	char* name;
@@ -274,15 +282,16 @@ void readBinBytes(){
 			printf("Error reading %s", name);
 		}
 		
-	fclose(fp);
-	char* out;
-	printf("Output File name: ");
-	
-	scanf("%s",out);
-	myFlush();
+		fclose(fp);
+		free(in);
+
+		//Encrypting
+		for(int i=0;i<size;i++){
+			arr[i] = bin_mod(arr[i],key.e,key.n);
+		}
 		
-	writeToFile("test.txt", arr, size,'b');
-	
+		writeToFile(arr, size,'b');
+		free(arr);
 	}else{
 		printf("Error reading %s", name);
 	}
