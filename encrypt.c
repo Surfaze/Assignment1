@@ -27,7 +27,7 @@ void main(void){
 		myFlush();
 		printf("\n--------------------------------------------------------------\n");
 	}while(choice < 1 || choice > 3);
-	(choice == 1)? encrypt() : (choice == 2) ? readBinBytes("test.bin") :  (choice == 3) ? exit(0) : 0;
+	(choice == 1)? encrypt() : (choice == 2) ? readBinBytes("test.jpg") :  (choice == 3) ? exit(0) : 0;
 }
 
 void myFlush(){
@@ -171,23 +171,30 @@ void readBinBytes(char* name){
 	
 	FILE* fp;
 	char* in;
-	fp = fopen(name,"rb");
-	fseek(fp,0,SEEK_END);
-	size_t size = ftell(fp);
-	rewind(fp);
-	in = (char*)malloc(size);
-	size_t ret_code = fread(in, sizeof *in, size, fp); 
-	printf("%d\n",size);
-	printf("%d\n\n",ret_code);
-	if(ret_code == size){
-		printf("Array read successfully, contents: \n");
-		for(int n = 0; n < size; ++n) printf("%d ", in[n]);
-		printf("\n");
-	}
-   if (feof(fp)){
-		printf("Error reading %s: unexpected end of file\n",name);
-   }
-   else if (ferror(fp)) {
+	if(fp = fopen(name,"rb")){
+	
+		fseek(fp,0,SEEK_END);
+		size_t size = ftell(fp);
+		rewind(fp);
+		in = (char*)malloc(size);
+		size_t ret_code = fread(in, sizeof *in, size, fp); 
+		printf("%d\n",size);
+		printf("%d\n\n",ret_code);
+		if(ret_code == size){
+			printf("Array read successfully, contents: \n");
+			for(int n = 0; n < size; ++n) printf("%d ", in[n]);
+			printf("\n");
+		}
+		if (feof(fp)){
+			printf("Error reading %s: unexpected end of file\n",name);
+	   }
+	   else if (ferror(fp)) {
+			printf("Error reading %s", name);
+	   }
+	
+	}else{
 		printf("Error reading %s", name);
-   }
+	}
+	
+	
 }
