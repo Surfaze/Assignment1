@@ -214,6 +214,13 @@ Keys readPubKey(){
 	
 }
 
+void encryptBytes(int* arr, int size, Keys key){
+	for(int i=0;i<size;i++){
+		//weird line of code that breaks this whole thing :(
+		arr[i] = bin_mod(arr[i],key.e,key.n);
+	}
+}
+
 void encrypt(){
 	//Declarations
 	int size, x, i;
@@ -286,10 +293,7 @@ void readBinBytes(){
 		free(in);
 
 		//Encrypting
-		for(int i=0;i<size;i++){
-			//weird line of code that breaks this whole thing :(
-			arr[i] = bin_mod(arr[i],key.e,key.n);
-		}
+		encryptBytes(arr, size, key);
 		
 		writeToFile(arr, size,'b');
 		free(arr);
