@@ -23,6 +23,7 @@ long bin_mod(long b, long e,long m);
 void genKey();
 void writeKeys(Keys key);
 Keys readPubKey();
+int* readBin(FILE* fp, int* arr, size_t* size, char* name);
 void encryptBytes(int* arr, int size, Keys key);
 void encrypt();
 void encryptBin();
@@ -199,6 +200,7 @@ void writeKeys(Keys key){
 }
 
 Keys readPubKey(){
+	
 	FILE* fp;
 	Keys key;
 	char name[100], in[100];
@@ -219,6 +221,40 @@ Keys readPubKey(){
 			key.n = atoi(token);
 			token = strtok(NULL,tok);
 			key.e = atoi(token);
+			return key;
+		}else{
+			printf("\nError reading file %s\n", name);
+			readPubKey();
+		}
+	}else{
+		printf("\nError reading file %s\n", name);
+		readPubKey();
+	}
+	
+}
+
+Keys readPrivKey(){
+	
+	FILE* fp;
+	Keys key;
+	char name[100], in[100];
+	size_t size;
+		
+	printf("Name of private key file you would like to use(e.g. xxx_priv.txt): ");
+	scanf("%s",name);
+	myFlush();
+	
+	if(fp = fopen(name, "r")){
+		fseek(fp,0,SEEK_END);
+		size = ftell(fp);
+		rewind(fp);
+		size_t ret_code = fread(in, 1, size, fp);
+		if(ret_code==size){
+			const char tok[2] = ";";
+			char* token = strtok(in, tok);
+			key.n = atoi(token);
+			token = strtok(NULL,tok);
+			key.d = atoi(token);
 			return key;
 		}else{
 			printf("\nError reading file %s\n", name);
@@ -266,13 +302,44 @@ void encrypt(){
 	}
 	
 	writeToFile(C,size,'f');
+	Keys empty = {0};
+	key = empty;
+}
+
+int* readBin(FILE* fp, int* arr, size_t* size, char* name){
+	char* in;
+	fseek(fp,0,SEEK_END);
+	*size = ftell(fp);
+	rewind(fp);
+	in = (char*)malloc(*size);
+	arr = (int*)malloc(*size);
+	size_t ret_code = fread(in, sizeof *in, *size, fp); 
+	
+	if(ret_code == *size){
+		printf("Array read successfully, contents: \n");
+		for(int n = 0; n < *size; ++n){
+			printf("%d ", in[n]);
+			arr[n] = (int)in[n];
+		}
+		printf("\n");
+	}
+	if (feof(fp)){
+		printf("Error reading %s: unexpected end of file\n",name);
+	}
+	else if (ferror(fp)) {
+		printf("Error reading %s", name);
+	}
+	
+	fclose(fp);
+	free(in);
+	return arr;
 }
 
 void encryptBin(){
 	
 	Keys key = readPubKey();
 	FILE* fp;
-	char* in;
+
 	int* arr;
 	size_t size;
 	
@@ -281,35 +348,10 @@ void encryptBin(){
 	scanf("%s",name);
 	myFlush();
 	
-	if(fp = fopen(name,"rb")){
-	
-		fseek(fp,0,SEEK_END);
-		size = ftell(fp);
-		rewind(fp);
-		in = (char*)malloc(size);
-		arr = (int*)malloc(size);
-		size_t ret_code = fread(in, sizeof *in, size, fp); 
-		printf("%d\n",size);
-		printf("%d\n\n",ret_code);
-		if(ret_code == size){
-			printf("Array read successfully, contents: \n");
-			for(int n = 0; n < size; ++n){
-				printf("%d ", in[n]);
-				arr[n] = (int)in[n];
-			}
-			printf("\n");
-		}
-		if (feof(fp)){
-			printf("Error reading %s: unexpected end of file\n",name);
-		}
-		else if (ferror(fp)) {
-			printf("Error reading %s", name);
-		}
-		
-		fclose(fp);
-		free(in);
 
-		//Encrypting
+	if(fp = fopen(name,"rb")){
+		
+		arr = readBin(fp,arr,&size,name);
 		encryptBytes(arr, size, key);
 		
 		writeToFile(arr, size,'b');
@@ -317,5 +359,11 @@ void encryptBin(){
 	}else{
 		printf("Error reading %s", name);
 	}
+	
+	Keys empty = {0};
+	key = empty;
+}
+
+void decryptBin(){
 	
 }
