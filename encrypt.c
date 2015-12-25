@@ -19,7 +19,7 @@ long bin_mod(long b, long e,long m);
 void genKey();
 void writeKeys(Keys key);
 void encrypt();
-void readBinBytes();
+void encryptBin();
 
 
 
@@ -31,7 +31,7 @@ void main(void){
 		myFlush();
 		printf("\n--------------------------------------------------------------\n");
 	}while(choice < 1 || choice > 4);
-	(choice == 1)? encrypt() : (choice == 2) ? readBinBytes() :  (choice == 3) ? genKey() : (choice == 4) ? exit(0) : 0;
+	(choice == 1)? encrypt() : (choice == 2) ? encryptBin() :  (choice == 3) ? genKey() : (choice == 4) ? exit(0) : 0;
 }
 
 void myFlush(){
@@ -216,7 +216,6 @@ Keys readPubKey(){
 
 void encryptBytes(int* arr, int size, Keys key){
 	for(int i=0;i<size;i++){
-		//weird line of code that breaks this whole thing :(
 		arr[i] = bin_mod(arr[i],key.e,key.n);
 	}
 }
@@ -251,7 +250,7 @@ void encrypt(){
 	writeToFile(C,size,'f');
 }
 
-void readBinBytes(){
+void encryptBin(){
 	
 	Keys key = readPubKey();	
 	
