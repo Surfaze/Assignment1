@@ -362,8 +362,11 @@ void encryptBin(){
 	
 	Keys empty = {0};
 	key = empty;
+	
 }
 
 void decryptBin(){
+	
+	
 	
 }
