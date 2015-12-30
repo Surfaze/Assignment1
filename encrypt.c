@@ -364,9 +364,3 @@ void encryptBin(){
 	key = empty;
 	
 }
-
-void decryptBin(){
-	
-	
-	
-}
