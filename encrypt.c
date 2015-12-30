@@ -132,7 +132,7 @@ void genKey(){
 	seedRandom();
 	
 	do{
-		//cannot do more 100k
+		//value larger = slower, by ALOT, cause of multiplication
 		p = prime(randomInt(KEYMIN,KEYMAX));
 		q = prime(randomInt(KEYMIN,KEYMAX));
 		printf("%lld\t%lld\n",p,q);
