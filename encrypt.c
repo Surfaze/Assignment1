@@ -333,6 +333,7 @@ int* readBin(FILE* fp, int* arr, size_t* size, char* name){
 	fclose(fp);
 	free(in);
 	return arr;
+	
 }
 
 void encryptBin(){
