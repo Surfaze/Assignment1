@@ -13,7 +13,7 @@ typedef struct{
 	int d;
 } Keys;
 
-//Define Functions
+//Function headers
 void welcomeMsg();
 void myFlush();
 void seedRandom();
@@ -30,7 +30,7 @@ void encryptBytes(int* arr, int size, Keys key);
 void encrypt();
 void encryptBin();
 
-
+//Main
 int main() {
 	
 	welcomeMsg();
@@ -129,6 +129,7 @@ void writeToFile(int* C,int size, char type){
 }
 	
 long bin_mod(long b, long e,long m){
+	//using binary modular exponentiation to further improve efficiency as modular exponentiation is slower than this
 	
 	if (m == 1) return 0;
 	
@@ -298,7 +299,7 @@ void encrypt(){
 
 	int size, x, i;
 	char M[1000];
-	int P[1000], C[1000];
+	int P[1000];
 	Keys key = readPubKey();
 
 	
@@ -311,16 +312,16 @@ void encrypt(){
 	for(i=0;i<size;i++){
 		P[i] = M[i]-'\0';
 		printf("%d\t",P[i]);
-		C[i] = bin_mod(P[i],key.e,key.n);
-		printf("%d\n",C[i]);
+		P[i] = bin_mod(P[i],key.e,key.n);
+		printf("%d\n",P[i]);
 	}
 	printf("\n\nEncrypted\n---------------------\n");
 	
 	for(x = 0; x< size;x++){
-		printf("%d\t",C[x]);
+		printf("%d\t",P[x]);
 	}
 	
-	writeToFile(C,size,'f');
+	writeToFile(P,size,'f');
 	Keys empty = {0};
 	key = empty;
 }
