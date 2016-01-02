@@ -7,13 +7,23 @@ typedef struct{
 	int n,e,d;
 } Keys;
 
+typedef struct{
+	long *array;
+	size_t size;
+} Array;
+
 void myFlush();
 void decrypt();
 void decryptBin();
-Keys readPubKey();
 Keys readPrivKey();
+char* getEncryptedFileName();
 char* readEncrypted();
 long bin_mod(long b, long e,long m);
+void initArray(Array *a, size_t initialSize);
+void freeArray(Array *a);
+int* readBin(FILE* fp, int* arr, size_t* size, char* name);
+void decryptBytes(int* arr, int size, Keys key);
+void writeToFile(int* C,int size, char type);
 
 void main (void){
 	
@@ -32,10 +42,6 @@ void main (void){
 void myFlush(){
 	
 	while(getchar()!='\n');
-}
-
-Keys readPubKey(){
-	
 }
 
 Keys readPrivKey(){
@@ -68,6 +74,7 @@ Keys readPrivKey(){
 		key.n = atoi(token);
 		token = strtok(NULL, tok);
 		key.d = atoi(token);
+		fclose(fp);
 		return key;
 		
 		
@@ -77,42 +84,36 @@ Keys readPrivKey(){
 	}
 }
 
-char* readEncrypted(){
-	
+char* getEncryptedFileName(){
 	//get encrypted file
-	char name[100];
+	static char name[100]; //need to defind as static as C don't allow the return of the address of a local variable to outside of the function
 	printf("Name of encrypted file you would like to decrypt(e.g. abc.txt): ");
 	scanf("%s",name);
 	myFlush();
-	/* size_t size; */
+	
 	FILE* fp;
 	
-	int c;
-	int count = 0;
-	char C[1000];
-	static char arr[1000];
-	
-	if(fp = fopen(name,"r")){
-		fscanf(fp, "%s", C);
-		
-		printf("%s\n",C);
-		
-		const char tok[2] = ";";
-		char* token = strtok(C, tok);
-		
-		int i = 0;
-		while(token != NULL){
-			printf("%s\n\n", token);
-			arr[i] = *token;
-			token = strtok(NULL, tok);
-			i++;
-		}
-		return arr;
+	if(fp = fopen(name, "r")){
+		fclose(fp);
+		return name;
 	}else{
 		printf("Error reading file \"%s\"\n",name);
-		readEncrypted();
-		
+		fclose(fp);
+		getEncryptedFileName();
 	}
+	
+}
+
+void initArray(Array *a, size_t initialSize){
+	a->array = (long*)malloc(initialSize * sizeof(long));
+	a->size = initialSize;
+	
+}
+void freeArray(Array *a){
+	free(a->array);
+	a->array = NULL;
+	a->size = 0;
+	
 }
 
 
@@ -120,23 +121,112 @@ void decrypt(){
 	
 	//get keys
 	Keys key = readPrivKey();
-	char* C = readEncrypted();
-	char P[1000], P2[1000];
+	char* name = getEncryptedFileName();
 	
-	//decrypt
-	for(int i=0;i<30;i++){
-		/* P[i] = M[i]-'\0'; */
-		printf("this is C[%d] %d\t",i,C[i]);
-		P[i] = bin_mod(C[i],key.d,key.n);
+	//Read contents of encrypted file
+	char temp[1000];
+	
+	FILE* fp;
+	if( fp = fopen(name, "r")){
+		fgets(temp, 1000, (FILE*)fp);
 		
-		P2[i] = P[i]+'\0';
-		printf("this is P %d\n",P2[i]);
+		//printf("print temp = %s\n",temp);
+		
+		const char tok[2] = ";";
+		char* token = strtok(temp, tok);
+		
+		int numberOfChara;
+		
+		while(token != NULL){
+			//printf("%s\n", token);
+			token = strtok(NULL, tok);
+			numberOfChara++;
+		}
+		
+		
+		//numberOfChara--; //because it will ++ 1 more time after while loop
+		
+		
+		//init the array
+		Array ctArray;
+		initArray(&ctArray, numberOfChara);
+		
+		//populate
+		rewind(fp);
+		fgets(temp, 1000, (FILE*)fp);
+		//printf("%s\n", temp);
+		
+		/* 
+		char* ptr;
+		ctArray.array[0] = strtol(temp, &ptr, 10);
+		ctArray.array[1] = strtol(ptr, &ptr, 10);
+		
+		for(int i = 2; i<numberOfChara-1; i++){
+			ctArray.array[i] = strtol(ptr, &ptr, 10);
+		}
+		ctArray.array[numberOfChara] = strtol(ptr, NULL, 10);
+		*/
+		
+		token = strtok(temp, tok);
+		
+		int count = 0;
+		while(token != NULL){
+			//printf("token = %s and count = %d\n", token, count);
+			ctArray.array[count] = strtol(token, NULL, 10); //convert into long and store
+			token = strtok(NULL, tok);
+			count++;
+		}
+		
+		
+		/* 
+		for(int i = 0; i<numberOfChara; i++){
+			printf("array |%d| = %ld\n",i,ctArray.array[i]);
+		}
+		*/
+		
+		
+		//decrypt
+		char PT[1000],print[1000];
+		
+		printf("\n--------------------------------------------------------------\n");
+		printf("Decrypted message is \"");
+		for(int i = 1; i<numberOfChara; i++){
+			PT[i] = bin_mod(ctArray.array[i-1], key.d, key.n);
+			print[i-1] = PT[i] + '\0';
+			printf("%c", print[i-1]);
+		}
+		printf("\".\n");
+		freeArray(&ctArray);
+		
+	}else{
+		printf("Error reading Encrypted file \"%s\"", name);
+		
 	}
 
 }
 
 void decryptBin(){
-	printf("test2");
+	
+	Keys key = readPrivKey();
+	FILE* fp;
+	
+	int* arr;
+	size_t size;
+	
+	char* name = getEncryptedFileName();
+	if( fp = fopen(name, "rb")){
+		arr = readBin(fp, arr, &size, name);
+		decryptBytes(arr, size, key);
+		writeToFile(arr, size, 'b');
+		free(arr);
+	}else{
+		printf("Error reading Encrypted file \"%s\"", name);
+		
+	}
+	
+	Keys empty = {0};
+	key =  empty;
+	
 }
 
 long bin_mod(long b, long d,long n){
@@ -151,5 +241,72 @@ long bin_mod(long b, long d,long n){
 		b = (b * b) % n;
 	}
 	return r;
+	
+}
+
+int* readBin(FILE* fp, int* arr, size_t* size, char* name){
+	char* in;
+	fseek(fp,0,SEEK_END);
+	*size = ftell(fp);
+	rewind(fp);
+	in = (char*)malloc(*size);
+	arr = (int*)malloc(*size);
+	size_t ret_code = fread(in, sizeof *in, *size, fp); 
+	
+	if(ret_code == *size){
+		printf("Array read successfully, contents: \n");
+		for(int n = 0; n < *size; ++n){
+			printf("%d ", in[n]);
+			arr[n] = (int)in[n];
+		}
+		printf("\n");
+	}
+	if (feof(fp)){
+		printf("Error reading %s: unexpected end of file\n",name);
+	}
+	else if (ferror(fp)) {
+		printf("Error reading %s", name);
+	}
+	
+	fclose(fp);
+	free(in);
+	return arr;
+	
+}
+
+void decryptBytes(int* arr, int size, Keys key){
+	
+	for(int i=0; i<size; i++){
+		arr[i] = bin_mod(arr[i],key.d,key.n);
+	}
+	
+}
+
+void writeToFile(int* C,int size, char type){
+	
+	FILE * fp;
+	char name[50];
+	
+	printf("\nEnter output file name: ");
+	scanf("%s",name);
+	myFlush();
+	
+	if(type == 'b'){
+		fp = fopen (name, "wb");
+		
+		for(int i = 0; i < size; i++){
+			fprintf(fp,"%d;",C[i]);
+		}
+		
+		fclose(fp);
+	}else{
+		fp = fopen (name, "w");
+		
+		for(int i = 0; i < size; i++){
+			fprintf(fp,"%d;",C[i]);
+		}
+		
+		fclose(fp);
+	}
 	
 }
