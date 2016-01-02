@@ -13,6 +13,8 @@ typedef struct{
 	int d;
 } Keys;
 
+//Function headers
+void welcomeMsg();
 void myFlush();
 void seedRandom();
 long prime(long in);
@@ -28,9 +30,24 @@ void encryptBytes(int* arr, int size, Keys key);
 void encrypt();
 void encryptBin();
 
-void main(void){
+//Main
+int main() {
+	
+	welcomeMsg();
+	return 0;
+	
+}
+
+void welcomeMsg() {
 	
 	int choice;
+	printf("*****************************************\n");
+	printf("*\t%-25s\t*\n","ST2614 Assignment 1 done by:","*");
+	printf("*\t%-25s\t*\n","Chong Jia Hao P1430615");
+	printf("*\t%-25s\t*\n","Nicholas Koh P1431207");
+	printf("*\t%-25s\t*\n","Class 2A / 21");
+	printf("*****************************************\n\n");
+
 	do{
 		printf("Action:\n1. Encrypt Message\n2. Encrypt Binary File\n3. Create a key pair\n4. Exit\nYour choice: ");
 		scanf("%d", &choice);
@@ -38,9 +55,11 @@ void main(void){
 		printf("\n--------------------------------------------------------------\n");
 	}while(choice < 1 || choice > 4);
 	(choice == 1)? encrypt() : (choice == 2) ? encryptBin() :  (choice == 3) ? genKey() : (choice == 4) ? printf("Good bye.") : 0;
-	
+
 }
 
+
+//===========================Encryption Function by Nicholas====================================
 void myFlush(){
 	
 	while(getchar()!='\n');
@@ -110,6 +129,7 @@ void writeToFile(int* C,int size, char type){
 }
 	
 long bin_mod(long b, long e,long m){
+	//using binary modular exponentiation to further improve efficiency as modular exponentiation is slower than this
 	
 	if (m == 1) return 0;
 	
@@ -279,7 +299,7 @@ void encrypt(){
 
 	int size, x, i;
 	char M[1000];
-	int P[1000], C[1000];
+	int P[1000];
 	Keys key = readPubKey();
 
 	
@@ -292,16 +312,16 @@ void encrypt(){
 	for(i=0;i<size;i++){
 		P[i] = M[i]-'\0';
 		printf("%d\t",P[i]);
-		C[i] = bin_mod(P[i],key.e,key.n);
-		printf("%d\n",C[i]);
+		P[i] = bin_mod(P[i],key.e,key.n);
+		printf("%d\n",P[i]);
 	}
 	printf("\n\nEncrypted\n---------------------\n");
 	
 	for(x = 0; x< size;x++){
-		printf("%d\t",C[x]);
+		printf("%d\t",P[x]);
 	}
 	
-	writeToFile(C,size,'f');
+	writeToFile(P,size,'f');
 	Keys empty = {0};
 	key = empty;
 }
@@ -365,3 +385,11 @@ void encryptBin(){
 	key = empty;
 	
 }
+//=============================End Encryption Function======================================
+
+
+
+//===========================Decryption Function by Jia Hao====================================
+//this is a test
+//change test
+//=============================End Decryption Function======================================
