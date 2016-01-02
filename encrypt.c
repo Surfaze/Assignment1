@@ -37,7 +37,7 @@ void main(void){
 		myFlush();
 		printf("\n--------------------------------------------------------------\n");
 	}while(choice < 1 || choice > 4);
-	(choice == 1)? encrypt() : (choice == 2) ? encryptBin() :  (choice == 3) ? genKey() : (choice == 4) ? exit(0) : 0;
+	(choice == 1)? encrypt() : (choice == 2) ? encryptBin() :  (choice == 3) ? genKey() : (choice == 4) ? printf("Good bye.") : 0;
 	
 }
 
