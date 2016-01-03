@@ -306,7 +306,7 @@ Keys readPrivKey(){
 		}
 	}else{
 		printf("\nError reading file %s\n", name);
-		readPubKey();
+		readPrivKey();
 	}
 	
 }
