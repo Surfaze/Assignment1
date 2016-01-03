@@ -42,13 +42,8 @@ Keys readPrivKey();
 Keys readPrivKey2();
 char* getEncryptedFileName();
 char* readEncrypted();
-<<<<<<< HEAD
-void initArray(Array *a, size_t initialSize);
-void freeArray(Array *a);
 void decryptBytes(long* arr, long size, Keys key);
-=======
-void decryptBytes(int* arr, int size, Keys key);
->>>>>>> origin/master
+
 
 //Main
 int main() {
@@ -588,17 +583,10 @@ void decrypt(){
 		//decrypt
 		char PT[1000],print[1000];
 		
-<<<<<<< HEAD
-		printf("\n--------------------------------------------------------------\n");
-		printf("\nDecrypted message is:\n\"");
-		for(long i = 1; i<numberOfChara; i++){
-			PT[i] = bin_mod(ctArray.array[i-1], key.d, key.n);
-=======
 		printf("\n--------------------------------------------------------------\n");	
 		printf("\n2 Decrypted message is:\n\"");
 		for(int i = 1; i<numberOfChara; i++){
 			PT[i] = bin_mod(ctArray[i-1], key.d, key.n);
->>>>>>> origin/master
 			print[i-1] = PT[i] + '\0';
 			printf("%c", print[i-1]);
 		}
