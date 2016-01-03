@@ -457,6 +457,7 @@ Keys readPrivKey2(){
 		
 		
 	}else{
+		fclose(fp);
 		printf("\nError reading file \"%s\"\n", name);
 		readPrivKey2();
 	}
