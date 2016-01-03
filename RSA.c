@@ -249,7 +249,9 @@ void writeKeys(Keys key){
 Keys readPubKey(){
 	
 	FILE* fp;
-	Keys key = {0};
+	Keys key;
+	key.n = 0;
+	key.e = 0;
 	char name[100], in[100];
 	size_t size;
 		
@@ -271,14 +273,14 @@ Keys readPubKey(){
 			return key;
 		}else{
 			printf("\nError reading file %s\n", name);
-			memset(name, '\0', sizeof(name));
-			readPubKey();
+			return key;
 		}
 	}else{
 		printf("\nError reading file %s\n", name);
-		memset(name, '\0', sizeof(name));
-		readPubKey();
+		return key;
 	}
+	
+	return key;
 	
 }
 
@@ -307,7 +309,7 @@ Keys readPrivKey(){
 			return key;
 		}else{
 			printf("\nError reading file %s\n", name);
-			readPubKey();
+			readPrivKey();
 		}
 	}else{
 		printf("\nError reading file %s\n", name);
@@ -329,8 +331,10 @@ void encrypt(){
 	int size, x, i;
 	char M[1000];
 	int P[1000];
-	Keys key = readPubKey();
-	printf("%d %d",key.n,key.e);
+	Keys key;
+	do{
+		key = readPubKey();
+	}while(key.n == 0 && key.e == 0);
 	
 	printf("Enter Message: ");
 	gets(M);
@@ -468,6 +472,10 @@ Keys readPrivKey2(){
 	
 	//open it
 	FILE* fp;
+	Keys key;
+	key.n = 0;
+	key.d = 0;
+	
 	if(fp = fopen(name,"r")){ //open the file in read mode, if it exists do these
 		
 		//get total size of the stream
@@ -481,7 +489,6 @@ Keys readPrivKey2(){
 		fread(in, 1, size, fp);
 		const char tok[2] = ";";
 		char* token = strtok(in, tok);
-		Keys key;
 		key.n = atoi(token);
 		token = strtok(NULL, tok);
 		key.d = atoi(token);
@@ -491,12 +498,11 @@ Keys readPrivKey2(){
 	}else{
 		fclose(fp);
 		printf("\nError reading file \"%s\"\n", name);
-		Keys key;
-		key.n = 0;
-		key.d = 0;
-		//return 0 because of assigning problem
+		return key;
 		
 	}
+	return key;
+	
 }
 
 char* getEncryptedFileName(){
@@ -535,9 +541,7 @@ void freeArray(Array *a){
 void decrypt(){
 	
 	//get keys
-	Keys key; //assign to 0
-	key.n = 0;
-	key.d = 0;
+	Keys key;
 	do{
 		key = readPrivKey2();
 	}while(key.n == 0 && key.d == 0);
