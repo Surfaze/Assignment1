@@ -213,6 +213,9 @@ void genKey(){
 	printf("\nn: %lld\nd: %lld\ne: %lld\n\n",key.n,key.d,key.e);
 
 	writeKeys(key);
+	Keys empty = {0};
+	key = empty;
+	menu();
 	
 }
 
@@ -348,6 +351,8 @@ void encrypt(){
 	writeToFile(P,size,'f');
 	Keys empty = {0};
 	key = empty;
+	menu();
+	
 }
 
 int* readBin(FILE* fp, int* arr, size_t* size, char* name){
@@ -407,6 +412,7 @@ void encryptBin(){
 	
 	Keys empty = {0};
 	key = empty;
+	menu();
 	
 }
 //=============================End Nicholas' Functions======================================
