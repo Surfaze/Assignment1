@@ -518,7 +518,8 @@ Keys readPrivKey2(){
 	}else{
 		fclose(fp);
 		printf("\nError reading file \"%s\"\n", name);
-		return key;
+		//return key;
+		readPrivKey2();
 		
 	}
 	return key;
