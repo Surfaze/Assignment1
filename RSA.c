@@ -37,7 +37,7 @@ long bin_mod(long b, long e,long m);
 void genKey();
 void writeKeys(Keys key);
 Keys readPubKey();
-int* readBin(FILE* fp, int* arr, size_t* size, char* name);
+int* readBin(FILE* fp, size_t* size, char* name);
 void encryptBytes(int* arr, int size, Keys key);
 void encrypt();
 void encryptBin();
@@ -361,8 +361,9 @@ void encrypt(){
 	
 }
 
-int* readBin(FILE* fp, int* arr, size_t* size, char* name){
+int* readBin(FILE* fp, size_t* size, char* name){
 	char* in;
+	int* arr;
 	fseek(fp,0,SEEK_END);
 	*size = ftell(fp);
 	rewind(fp);
@@ -407,7 +408,7 @@ void encryptBin(){
 
 	if(fp = fopen(name,"rb")){
 		
-		arr = readBin(fp,arr,&size,name);
+		arr = readBin(fp,&size,name);
 		encryptBytes(arr, size, key);
 		
 		writeToFile(arr, size,'b');
@@ -422,37 +423,46 @@ void encryptBin(){
 	
 }
 
-int* readEncryptedBin(FILE* fp, int* arr, size_t* size, char* name){
+int* readEncryptedBin(FILE* fp, size_t* size, char* name){
 	
 	char* in;
+	int* arr;
 	fseek(fp,0,SEEK_END);
 	*size = ftell(fp);
 	rewind(fp);
 	in = (char*)malloc(*size);
 	size_t ret_code = fread(in, 1, *size, fp);
 	
-	int numberOfChara = 1;
+	if(ret_code == *size){
+		char* cpy;
+		strcpy(cpy, in);
+		
+		char *s=in, *t = NULL;
+		int i=0;
+		while ((t = strtok(s, ";")) != NULL) {
+			s = NULL;
+			i++;
+		}
+		i--;
+		arr = (int*)malloc(i);
+		int j = 0;
+		
+		while (j<i && (t = strtok(cpy, ";")) != NULL) {
+			cpy = NULL;
+			arr[j]=atoi(t);
+			j++;
+		}
+		*size = i;//new actual size
+	}
+	if (feof(fp)){
+		printf("Error reading %s: unexpected end of file\n",name);
+	}
+	else if (ferror(fp)) {
+		printf("Error reading %s", name);
+	}
 	
-	char* cpy;
-	stpcpy(cpy, in);
-	
-	char *s=in, *t = NULL;
-	int i=0;
-	while ((t = strtok(s, ";")) != NULL) {
-    	s = NULL;
-		i++;
-    }
-	i--;
-	arr = (int*)malloc(i);
-	int j = 0;
-	
-	printf("%s",cpy);
-	while (j<i && (t = strtok(cpy, ";")) != NULL) {
-    	cpy = NULL;
-		arr[j]=atoi(t);
-		printf("%d",arr[j]);
-		j++;
-    }
+	fclose(fp);
+	free(in);
 	return arr;
 }
 //=============================End Nicholas' Functions======================================
@@ -640,7 +650,7 @@ void decryptBin(){
 	
 	char* name = getEncryptedFileName();
 	if( fp = fopen(name, "rb")){
-		arr = readEncryptedBin(fp, arr, &size, name);
+		arr = readEncryptedBin(fp,&size, name);
 		decryptBytes(arr, size, key);
 		writeToFile(arr, size, 'b');
 		free(arr);
@@ -658,6 +668,7 @@ void decryptBin(){
 void decryptBytes(int* arr, int size, Keys key){
 	
 	for(int i=0; i<size; i++){
+		printf("%d\n",arr[i]);
 		arr[i] = bin_mod(arr[i],key.d,key.n);
 	}
 	
