@@ -20,11 +20,6 @@ typedef struct{
 	int d;
 } Keys;
 
-typedef struct{
-	long *array;
-	size_t size;
-} Array;
-
 //Function headers
 void menu();
 void myFlush();
@@ -47,8 +42,6 @@ Keys readPrivKey();
 Keys readPrivKey2();
 char* getEncryptedFileName();
 char* readEncrypted();
-void initArray(Array *a, size_t initialSize);
-void freeArray(Array *a);
 void decryptBytes(int* arr, int size, Keys key);
 
 //Main
@@ -535,19 +528,6 @@ char* getEncryptedFileName(){
 	
 }
 
-void initArray(Array *a, size_t initialSize){
-	a->array = (long*)malloc(initialSize * sizeof(long));
-	a->size = initialSize;
-	
-}
-void freeArray(Array *a){
-	free(a->array);
-	a->array = NULL;
-	a->size = 0;
-	
-}
-
-
 void decrypt(){
 	
 	//get keys
@@ -582,55 +562,36 @@ void decrypt(){
 		
 		
 		//init the array
-		Array ctArray;
-		initArray(&ctArray, numberOfChara);
+		long* ctArray = (long*)malloc(sizeof(numberOfChara));
 		
 		//populate
 		rewind(fp);
 		fgets(temp, 1000, (FILE*)fp);
 		//printf("%s\n", temp);
-		
-		/* 
-		char* ptr;
-		ctArray.array[0] = strtol(temp, &ptr, 10);
-		ctArray.array[1] = strtol(ptr, &ptr, 10);
-		
-		for(int i = 2; i<numberOfChara-1; i++){
-			ctArray.array[i] = strtol(ptr, &ptr, 10);
-		}
-		ctArray.array[numberOfChara] = strtol(ptr, NULL, 10);
-		*/
-		
+				
 		token = strtok(temp, tok);
 		
 		int count = 0;
 		while(token != NULL){
 			//printf("token = %s and count = %d\n", token, count);
-			ctArray.array[count] = strtol(token, NULL, 10); //convert into long and store
+			ctArray[count] = strtol(token, NULL, 10); //convert into long and store
 			token = strtok(NULL, tok);
 			count++;
 		}
 		
-		
-		/* 
-		for(int i = 0; i<numberOfChara; i++){
-			printf("array |%d| = %ld\n",i,ctArray.array[i]);
-		}
-		*/
-		
-		
 		//decrypt
 		char PT[1000],print[1000];
 		
-		printf("\n--------------------------------------------------------------\n");
-		printf("\nDecrypted message is:\n\"");
+		printf("\n--------------------------------------------------------------\n");	
+		printf("\n2 Decrypted message is:\n\"");
 		for(int i = 1; i<numberOfChara; i++){
-			PT[i] = bin_mod(ctArray.array[i-1], key.d, key.n);
+			PT[i] = bin_mod(ctArray[i-1], key.d, key.n);
 			print[i-1] = PT[i] + '\0';
 			printf("%c", print[i-1]);
 		}
 		printf("\"\n");
-		freeArray(&ctArray);
+		free(ctArray);
+		
 		menu();
 		
 	}else{
