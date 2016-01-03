@@ -535,16 +535,14 @@ void freeArray(Array *a){
 void decrypt(){
 	
 	//get keys
-<<<<<<< HEAD
+
 	Keys key = readPrivKey();
-=======
 	Keys key; //assign to 0
 	key.n = 0;
 	key.d = 0;
 	do{
 		key = readPrivKey2();
 	}while(key.n == 0 && key.d == 0);
->>>>>>> f1deaa2d11114fa58dae401373f39e8b28c34356
 	char* name = getEncryptedFileName();
 	
 	//Read contents of encrypted file
