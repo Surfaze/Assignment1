@@ -249,7 +249,7 @@ void writeKeys(Keys key){
 Keys readPubKey(){
 	
 	FILE* fp;
-	Keys key;
+	Keys key = {0};
 	char name[100], in[100];
 	size_t size;
 		
@@ -271,10 +271,12 @@ Keys readPubKey(){
 			return key;
 		}else{
 			printf("\nError reading file %s\n", name);
+			memset(name, '\0', sizeof(name));
 			readPubKey();
 		}
 	}else{
 		printf("\nError reading file %s\n", name);
+		memset(name, '\0', sizeof(name));
 		readPubKey();
 	}
 	
@@ -328,7 +330,7 @@ void encrypt(){
 	char M[1000];
 	int P[1000];
 	Keys key = readPubKey();
-
+	printf("%d %d",key.n,key.e);
 	
 	printf("Enter Message: ");
 	gets(M);
