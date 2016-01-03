@@ -567,15 +567,15 @@ void decrypt(){
 		const char tok[2] = ";";
 		char* token = strtok(temp, tok);
 		
-		long numberOfChara;
+		int numberOfChara = 0;
 		
 		while(token != NULL){
-			//printf("%s\n", token);
+			printf("%s\n", token);
 			token = strtok(NULL, tok);
 			numberOfChara++;
 		}
 		
-		
+		//printf(" number of chara = %d",numberOfChara);
 		//numberOfChara--; //because it will ++ 1 more time after while loop
 		
 		
