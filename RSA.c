@@ -137,7 +137,7 @@ void writeToFile(int* C,int size, char type){
 	}else{
 		fp = fopen (name, "w");
 		
-		for(long i = 0; i < size; i++){
+		for(int i = 0; i < size; i++){
 			fprintf(fp,"%d;",C[i]);
 		}
 		
@@ -145,7 +145,7 @@ void writeToFile(int* C,int size, char type){
 	}
 	
 }
-void writeDeBin(int* C, long size){
+void writeDeBin(int* C, int size){
 	
 	FILE * fp;
 	char name[50];
@@ -579,7 +579,7 @@ void decrypt(){
 		
 		
 		//init the array
-		long* ctArray = (long*)malloc(sizeof(numberOfChara));
+		int* ctArray = (int*)malloc(sizeof(numberOfChara));
 		
 		//populate
 		rewind(fp);
