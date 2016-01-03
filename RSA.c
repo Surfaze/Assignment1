@@ -436,7 +436,6 @@ Keys readPrivKey2(){
 	FILE* fp;
 	if(fp = fopen(name,"r")){ //open the file in read mode, if it exists do these
 		
-		
 		//get total size of the stream
 		fseek(fp, 0, SEEK_END); //seek the stream of fp, from o, to the end of stream
 		size = ftell(fp); //stores how many character are in the sream, including the EOF, each chara is 1 byte
@@ -455,11 +454,14 @@ Keys readPrivKey2(){
 		fclose(fp);
 		return key;
 		
-		
 	}else{
 		fclose(fp);
 		printf("\nError reading file \"%s\"\n", name);
-		readPrivKey2();
+		Keys key;
+		key.n = 0;
+		key.d = 0;
+		//return 0 because of assigning problem
+		
 	}
 }
 
@@ -499,7 +501,12 @@ void freeArray(Array *a){
 void decrypt(){
 	
 	//get keys
-	Keys key = readPrivKey2();
+	Keys key; //assign to 0
+	key.n = 0;
+	key.d = 0;
+	do{
+		key = readPrivKey2();
+	}while(key.n == 0 && key.d == 0);
 	char* name = getEncryptedFileName();
 	
 	//Read contents of encrypted file
