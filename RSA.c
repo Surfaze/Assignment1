@@ -1,3 +1,10 @@
+/*
+Done By:
+- Nicholas Koh P1431207
+- Chong Jia Hao P1430615
+- Class 2A / 21
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -19,7 +26,7 @@ typedef struct{
 } Array;
 
 //Function headers
-void welcomeMsg();
+void menu();
 void myFlush();
 void seedRandom();
 long prime(long in);
@@ -47,33 +54,36 @@ void decryptBytes(int* arr, int size, Keys key);
 //Main
 int main() {
 	
-	welcomeMsg();
+	printf("*****************************************\n");
+	printf("*\t%-25s\t*\n","ST2614 Assignment 1 done by:","*");
+	printf("*\t%-25s\t*\n","Nicholas Koh P1431207");
+	printf("*\t%-25s\t*\n","Chong Jia Hao P1430615");
+	printf("*\t%-25s\t*\n","Class 2A / 21");
+	printf("*****************************************\n\n");
+	
+	menu();
 	return 0;
 	
 }
 
-void welcomeMsg() {
+void menu() {
 	
 	int choice;
-	printf("*****************************************\n");
-	printf("*\t%-25s\t*\n","ST2614 Assignment 1 done by:","*");
-	printf("*\t%-25s\t*\n","Chong Jia Hao P1430615");
-	printf("*\t%-25s\t*\n","Nicholas Koh P1431207");
-	printf("*\t%-25s\t*\n","Class 2A / 21");
-	printf("*****************************************\n\n");
+	
 
 	do{
-		printf("Action:\n1. Encrypt Message\n2. Encrypt Binary File\n3. Create a key pair\n4. Decrypt Message\n5. Decrypt Binary File\n6. Exit\nYour choice: ");
+		printf("\n--------------------------------------------------------------\n");
+		printf("\nAction Menu:\n1. Create a key pair\n2. Encrypt Message\n3. Encrypt Binary File\n4. Decrypt Message\n5. Decrypt Binary File\n6. Exit\nYour choice: ");
 		scanf("%d", &choice);
 		myFlush();
 		printf("\n--------------------------------------------------------------\n");
-	}while(choice < 1 || choice > 4);
-	(choice == 1)? encrypt() : (choice == 2) ? encryptBin() :  (choice == 3) ? genKey() : (choice == 4) ? decrypt() : (choice == 5) ? decryptBin() : (choice == 6 ) ? printf("Goody Bye.") : 0;
+	}while(choice < 1 || choice > 6);
+	(choice == 1)? genKey() : (choice == 2) ? encrypt() :  (choice == 3) ? encryptBin() : (choice == 4) ? decrypt() : (choice == 5) ? decryptBin() : (choice == 6 ) ? printf("Goody Bye.") : 0;
 
 }
 
 
-//===========================Encryption Function by Nicholas====================================
+//===========================Function by Nicholas, mostly encryption====================================
 void myFlush(){
 	
 	while(getchar()!='\n');
@@ -399,18 +409,18 @@ void encryptBin(){
 	key = empty;
 	
 }
-//=============================End Encryption Function======================================
+//=============================End Nicholas' Functions======================================
 
 
 
-//===========================Decryption Function by Jia Hao====================================
+//===========================Function by Jia Hao, mostly decryption====================================
 Keys readPrivKey2(){
 	
 	size_t size; //store the size of the stream of file, declare outside so others can use
 	
 	//get the private key file
 	char name[100];
-	printf("Name of private key file you would like to use(e.g. xxx_priv.txt): ");
+	printf("\nName of private key file you would like to use(e.g. xxx_priv.txt): ");
 	scanf("%s",name);
 	myFlush();
 	
@@ -447,7 +457,7 @@ Keys readPrivKey2(){
 char* getEncryptedFileName(){
 	//get encrypted file
 	static char name[100]; //need to defind as static as C don't allow the return of the address of a local variable to outside of the function
-	printf("Name of encrypted file you would like to decrypt(e.g. abc.txt): ");
+	printf("\nName of encrypted file you would like to decrypt(e.g. abc.txt): ");
 	scanf("%s",name);
 	myFlush();
 	
@@ -549,14 +559,15 @@ void decrypt(){
 		char PT[1000],print[1000];
 		
 		printf("\n--------------------------------------------------------------\n");
-		printf("Decrypted message is \"");
+		printf("\nDecrypted message is:\n\"");
 		for(int i = 1; i<numberOfChara; i++){
 			PT[i] = bin_mod(ctArray.array[i-1], key.d, key.n);
 			print[i-1] = PT[i] + '\0';
 			printf("%c", print[i-1]);
 		}
-		printf("\".\n");
+		printf("\"\n");
 		freeArray(&ctArray);
+		menu();
 		
 	}else{
 		printf("Error reading Encrypted file \"%s\"", name);
@@ -586,6 +597,7 @@ void decryptBin(){
 	
 	Keys empty = {0};
 	key =  empty;
+	menu();
 	
 }
 
@@ -596,4 +608,4 @@ void decryptBytes(int* arr, int size, Keys key){
 	}
 	
 }
-//=============================End Decryption Function======================================
+//=============================End Jia Hao's Functions======================================
