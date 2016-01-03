@@ -117,7 +117,7 @@ long isPrime(long x){
 	return 0;
 	
 }
-void writeToFile(long* C,long size, char type){
+void writeToFile(long* C, long size, char type){
 	
 	FILE * fp;
 	char name[50];
@@ -144,6 +144,23 @@ void writeToFile(long* C,long size, char type){
 		fclose(fp);
 	}
 	
+}
+void writeDeBin(long* C, long size){
+	
+	FILE * fp;
+	char name[50];
+	
+	printf("\nEnter output file name: ");
+	scanf("%s",name);
+	myFlush();
+	
+	fp = fopen (name, "wb");
+	
+	for(long i = 0; i < size; i++){
+		fprintf(fp,"%c",C[i]);
+	}
+	
+	fclose(fp);
 }
 	
 long bin_mod(long b, long e,long m){
@@ -614,7 +631,7 @@ void decryptBin(){
 	if( fp = fopen(name, "rb")){
 		arr = readEncryptedBin(fp,&size, name);
 		decryptBytes(arr, size, key);
-		writeToFile(arr, size, 'b');
+		writeDeBin(arr, size);
 		free(arr);
 	}else{
 		printf("Error reading Encrypted file \"%s\"", name);
