@@ -417,6 +417,40 @@ void encryptBin(){
 	menu();
 	
 }
+
+int* readEncryptedBin(FILE* fp, int* arr, size_t* size, char* name){
+	
+	char* in;
+	fseek(fp,0,SEEK_END);
+	*size = ftell(fp);
+	rewind(fp);
+	in = (char*)malloc(*size);
+	size_t ret_code = fread(in, 1, *size, fp);
+	
+	//const char tok[2] = ";";
+	//char* token = strtok(in, tok);
+	//arr[0]=atoi(token);
+	
+	int numberOfChara = 1;
+	
+	char *s=in, *t = NULL;
+	int i=0;
+	while ((t = strtok(s, ";")) != NULL) {
+    	s = NULL;
+		i++;
+    }
+	arr = (int*)malloc(i-1);
+	int j = 0;
+	s=in;
+	printf("%s",s);
+	while (j<i && (t = strtok(s, ";")) != NULL) {
+    	s = NULL;
+		arr[j]=atoi(t);
+		printf("%d",arr[j]);
+		j++;
+    }
+	return arr;
+}
 //=============================End Nicholas' Functions======================================
 
 
@@ -498,7 +532,7 @@ void freeArray(Array *a){
 void decrypt(){
 	
 	//get keys
-	Keys key = readPrivKey2();
+	Keys key = readPrivKey();
 	char* name = getEncryptedFileName();
 	
 	//Read contents of encrypted file
@@ -594,7 +628,7 @@ void decryptBin(){
 	
 	char* name = getEncryptedFileName();
 	if( fp = fopen(name, "rb")){
-		arr = readBin(fp, arr, &size, name);
+		arr = readEncryptedBin(fp, arr, &size, name);
 		decryptBytes(arr, size, key);
 		writeToFile(arr, size, 'b');
 		free(arr);
