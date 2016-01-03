@@ -31,14 +31,14 @@ void myFlush();
 void seedRandom();
 long prime(long in);
 long randomInt(long min, long max);
-int isPrime(long x);
-void writeToFile(int* C,int size, char type);
+long isPrime(long x);
+void writeToFile(long* C,long size, char type);
 long bin_mod(long b, long e,long m);
 void genKey();
 void writeKeys(Keys key);
 Keys readPubKey();
-int* readBin(FILE* fp, size_t* size, char* name);
-void encryptBytes(int* arr, int size, Keys key);
+long* readBin(FILE* fp, size_t* size, char* name);
+void encryptBytes(long* arr, long size, Keys key);
 void encrypt();
 void encryptBin();
 void decrypt();
@@ -49,7 +49,7 @@ char* getEncryptedFileName();
 char* readEncrypted();
 void initArray(Array *a, size_t initialSize);
 void freeArray(Array *a);
-void decryptBytes(int* arr, int size, Keys key);
+void decryptBytes(long* arr, long size, Keys key);
 
 //Main
 int main() {
@@ -112,18 +112,18 @@ long randomInt(long min, long max){
 	
 }
 
-int isPrime(long x){
+long isPrime(long x){
 	
 	if (x % 2 == 0)return 1;
 	
 	long max = floor(sqrt(x));
-	for (int i = 1; i < max; i++) {
+	for (long i = 1; i < max; i++) {
 		if (x % ((2 * i) + 1) == 0) return 1;
 	}
 	return 0;
 	
 }
-void writeToFile(int* C,int size, char type){
+void writeToFile(long* C,long size, char type){
 	
 	FILE * fp;
 	char name[50];
@@ -135,7 +135,7 @@ void writeToFile(int* C,int size, char type){
 	if(type == 'b'){
 		fp = fopen (name, "wb");
 		
-		for(int i = 0; i < size; i++){
+		for(long i = 0; i < size; i++){
 			fprintf(fp,"%d;",C[i]);
 		}
 		
@@ -143,7 +143,7 @@ void writeToFile(int* C,int size, char type){
 	}else{
 		fp = fopen (name, "w");
 		
-		for(int i = 0; i < size; i++){
+		for(long i = 0; i < size; i++){
 			fprintf(fp,"%d;",C[i]);
 		}
 		
@@ -318,9 +318,9 @@ Keys readPrivKey(){
 	
 }
 
-void encryptBytes(int* arr, int size, Keys key){
+void encryptBytes(long* arr, long size, Keys key){
 	
-	for(int i=0;i<size;i++){
+	for(long i=0;i<size;i++){
 		arr[i] = bin_mod(arr[i],key.e,key.n);
 	}
 	
@@ -328,9 +328,9 @@ void encryptBytes(int* arr, int size, Keys key){
 
 void encrypt(){
 
-	int size, x, i;
+	long size, x, i;
 	char M[1000];
-	int P[1000];
+	long P[1000];
 	Keys key;
 	do{
 		key = readPubKey();
@@ -361,21 +361,21 @@ void encrypt(){
 	
 }
 
-int* readBin(FILE* fp, size_t* size, char* name){
+long* readBin(FILE* fp, size_t* size, char* name){
 	char* in;
-	int* arr;
+	long* arr;
 	fseek(fp,0,SEEK_END);
 	*size = ftell(fp);
 	rewind(fp);
 	in = (char*)malloc(*size);
-	arr = (int*)malloc(*size);
+	arr = (long*)malloc(*size);
 	size_t ret_code = fread(in, sizeof *in, *size, fp); 
 	
 	if(ret_code == *size){
 		printf("Array read successfully, contents: \n");
-		for(int n = 0; n < *size; ++n){
+		for(long n = 0; n < *size; ++n){
 			printf("%d ", in[n]);
-			arr[n] = (int)in[n];
+			arr[n] = (long)in[n];
 		}
 		printf("\n");
 	}
@@ -397,7 +397,7 @@ void encryptBin(){
 	Keys key = readPubKey();
 	FILE* fp;
 
-	int* arr;
+	long* arr;
 	size_t size;
 	
 	printf("File name to encrypt: ");
@@ -423,10 +423,10 @@ void encryptBin(){
 	
 }
 
-int* readEncryptedBin(FILE* fp, size_t* size, char* name){
+long* readEncryptedBin(FILE* fp, size_t* size, char* name){
 	
 	char* in;
-	int* arr;
+	long* arr;
 	fseek(fp,0,SEEK_END);
 	*size = ftell(fp);
 	rewind(fp);
@@ -438,14 +438,14 @@ int* readEncryptedBin(FILE* fp, size_t* size, char* name){
 		strcpy(cpy, in);
 		
 		char *s=in, *t = NULL;
-		int i=0;
+		long i=0;
 		while ((t = strtok(s, ";")) != NULL) {
 			s = NULL;
 			i++;
 		}
 		i--;
-		arr = (int*)malloc(i);
-		int j = 0;
+		arr = (long*)malloc(i);
+		long j = 0;
 		
 		while (j<i && (t = strtok(cpy, ";")) != NULL) {
 			cpy = NULL;
@@ -569,7 +569,7 @@ void decrypt(){
 		const char tok[2] = ";";
 		char* token = strtok(temp, tok);
 		
-		int numberOfChara;
+		long numberOfChara;
 		
 		while(token != NULL){
 			//printf("%s\n", token);
@@ -624,7 +624,7 @@ void decrypt(){
 		
 		printf("\n--------------------------------------------------------------\n");
 		printf("\nDecrypted message is:\n\"");
-		for(int i = 1; i<numberOfChara; i++){
+		for(long i = 1; i<numberOfChara; i++){
 			PT[i] = bin_mod(ctArray.array[i-1], key.d, key.n);
 			print[i-1] = PT[i] + '\0';
 			printf("%c", print[i-1]);
@@ -645,7 +645,7 @@ void decryptBin(){
 	Keys key = readPrivKey2();
 	FILE* fp;
 	
-	int* arr;
+	long* arr;
 	size_t size;
 	
 	char* name = getEncryptedFileName();
@@ -665,9 +665,9 @@ void decryptBin(){
 	
 }
 
-void decryptBytes(int* arr, int size, Keys key){
+void decryptBytes(long* arr, long size, Keys key){
 	
-	for(int i=0; i<size; i++){
+	for(long i=0; i<size; i++){
 		printf("%d\n",arr[i]);
 		arr[i] = bin_mod(arr[i],key.d,key.n);
 	}
