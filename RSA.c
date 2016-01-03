@@ -431,11 +431,10 @@ int* readEncryptedBin(FILE* fp, int* arr, size_t* size, char* name){
 	in = (char*)malloc(*size);
 	size_t ret_code = fread(in, 1, *size, fp);
 	
-	//const char tok[2] = ";";
-	//char* token = strtok(in, tok);
-	//arr[0]=atoi(token);
-	
 	int numberOfChara = 1;
+	
+	char* cpy;
+	stpcpy(cpy, in);
 	
 	char *s=in, *t = NULL;
 	int i=0;
@@ -443,12 +442,13 @@ int* readEncryptedBin(FILE* fp, int* arr, size_t* size, char* name){
     	s = NULL;
 		i++;
     }
-	arr = (int*)malloc(i-1);
+	i--;
+	arr = (int*)malloc(i);
 	int j = 0;
-	s=in;
-	printf("%s",s);
-	while (j<i && (t = strtok(s, ";")) != NULL) {
-    	s = NULL;
+	
+	printf("%s",cpy);
+	while (j<i && (t = strtok(cpy, ";")) != NULL) {
+    	cpy = NULL;
 		arr[j]=atoi(t);
 		printf("%d",arr[j]);
 		j++;
