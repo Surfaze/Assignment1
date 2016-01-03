@@ -535,8 +535,6 @@ void freeArray(Array *a){
 void decrypt(){
 	
 	//get keys
-
-	Keys key = readPrivKey();
 	Keys key; //assign to 0
 	key.n = 0;
 	key.d = 0;
