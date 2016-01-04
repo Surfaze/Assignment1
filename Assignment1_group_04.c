@@ -42,6 +42,7 @@ int* readBin(FILE* fp, size_t* size, char* name);
 void encryptBytes(int* arr, int size, Keys key);
 void encrypt();
 void encryptBin();
+int* readEncryptedBin(FILE* fp, size_t* size, char* name);
 void decrypt();
 void decryptBin();
 Keys readPrivKey();
@@ -588,14 +589,12 @@ void decrypt(){
 		
 		
 		//init the array
-		//long* ctArray = (long*)malloc(sizeof(numberOfChara));
 		Array ctArray;
 		initArray(&ctArray, numberOfChara);
 		
 		//populate
 		rewind(fp);
 		fgets(temp, 1000, (FILE*)fp);
-		//printf("%s\n", temp);
 				
 		token = strtok(temp, tok);
 		
@@ -603,11 +602,8 @@ void decrypt(){
 		while(token != NULL){
 			printf("token = %s and count = %d\n", token, count);
 			
-			//ctArray[count] = strtol(token, NULL, 10); //convert into long and store
 			ctArray.array[count] = strtol(token, NULL, 10); //convert into long and store
 			
-			
-			//printf("ctArray%d = %ld\n",count,ctArray[count]);
 			token = strtok(NULL, tok);
 			count++;
 		}
@@ -626,30 +622,6 @@ void decrypt(){
 		}
 		printf("\".\n");
 		freeArray(&ctArray);
-		
-		
-		
-		
-		
-		/* 
-		
-		
-		//printf("count = %d\nctArray = %s",count,ctArray);
-		printf("\n--------------------------------------------------------------\n");	
-		printf("\n2 Decrypted message is:\n\"");
-		for(int i = 1; i<=numberOfChara; i++){
-			//PT[i] = bin_mod(ctArray[i], key.d, key.n);
-			PT[i] = bin_mod(ctArray.array[i-1], key.d, key.n);
-			
-			print[i-1] = PT[i] + '\0';
-			printf("%c", print[i]);
-		}
-		printf("\"\n");
-		//free(ctArray);
-		freeArray(&ctArray); 
-		
-		
-		*/
 		
 		menu();
 		
@@ -691,7 +663,7 @@ void decryptBytes(int* arr, int size, Keys key){
 		printf("%d\n",arr[i]);
 		arr[i] = bin_mod(arr[i],key.d,key.n);
 	}
-	
+
 }
 
 void initArray(Array *a, size_t initialSize){
