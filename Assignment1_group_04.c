@@ -11,8 +11,8 @@ Done By:
 #include <math.h>
 #include <time.h>
 
-#define KEYMIN 0
-#define KEYMAX 50000
+#define KEYMIN 25000
+#define KEYMAX 30000
 
 typedef struct{
 	int n;
